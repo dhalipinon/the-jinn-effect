@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5 Days Later...</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Great+Vibes&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Her Favorite Palette */
+            --bg-pink: #FFF0F5;       
+            --soft-pink: #FFB7C5;     
+            --deep-pink: #E75480;     
+            --text-main: #4A4A4A;     
+            --white: #FFFFFF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(180deg, var(--bg-pink) 0%, #fff 100%);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.8;
+            width: 100%;
+        }
+
+        h1, h2, h3 { font-weight: 600; color: var(--deep-pink); }
+        .script-font { font-family: 'Great Vibes', cursive; font-size: 3rem; color: var(--deep-pink); margin-bottom: 5px; display: block;}
+        
+        /* Floating Hearts Animation */
+        .hearts-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .heart {
+            position: absolute;
+            bottom: -100px;
+            width: 20px;
+            height: 20px;
+            background: var(--soft-pink);
+            transform: rotate(45deg);
+            opacity: 0.4;
+            animation: floatUp 15s infinite linear;
+        }
+        .heart::before, .heart::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--soft-pink);
+            border-radius: 50%;
+        }
+        .heart::before { top: -10px; left: 0; }
+        .heart::after { left: -10px; top: 0; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(45deg) scale(0.8); opacity: 0; }
+            50% { opacity: 0.6; }
+            100% { transform: translateY(-120vh) rotate(45deg) scale(1.2); opacity: 0; }
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .hero h1 { font-size: 2.5rem; margin-bottom: 15px; line-height: 1.3; color: var(--deep-pink); }
+        .hero p { font-size: 1.1rem; max-width: 600px; color: #666; margin-bottom: 30px; }
+        
+        .btn-start {
+            padding: 15px 40px;
+            background: var(--deep-pink);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 10px 20px rgba(231, 84, 128, 0.3);
+            font-weight: 600;
+        }
+        .btn-start:hover { transform: scale(1.05); box-shadow: 0 15px 30px rgba(231, 84, 128, 0.5); }
+
+        /* General Container */
+        .container { max-width: 800px; margin: 0 auto; padding: 60px 20px; }
+
+        /* Timeline Cards */
+        .timeline-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 25px rgba(231, 84, 128, 0.1);
+            border-left: 5px solid var(--soft-pink);
+            transform: translateY(30px);
+            opacity: 0;
+            transition: all 0.8s ease;
+        }
+        .timeline-card.visible { transform: translateY(0); opacity: 1; }
+        
+        .day-tag { 
+            background: var(--bg-pink); color: var(--deep-pink); 
+            padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; 
+            display: inline-block; margin-bottom: 15px; text-transform: uppercase;
+        }
+
+        /* "Why I'm Smiling" Grid */
+        .grid-section h2 { text-align: center; color: var(--deep-pink); margin-bottom: 10px; font-size: 2rem;}
+        .grid-section p.subtitle { text-align: center; color: #888; margin-bottom: 40px; font-size: 0.9rem; }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .detail-box {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(231, 84, 128, 0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            transition: transform 0.3s;
+        }
+        .detail-box:hover { transform: translateY(-5px); }
+        .detail-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+        .detail-box h4 { margin-bottom: 10px; color: var(--text-main); }
+        .detail-box p { font-size: 0.95rem; color: #666; }
+
+        /* Meeting Scenario Section */
+        .meeting-scenario {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .meeting-scenario h2 { font-family: 'Playfair Display', serif; margin-bottom: 20px; font-size: 2.2rem; }
+        .scenario-text { font-size: 1.1rem; color: #555; line-height: 2; }
+        .win-text { font-weight: bold; color: var(--deep-pink); margin-top: 20px; display: block; }
+
+        /* === FIXED CENTERING LOGIC START === */
+        
+        /* The container that holds the button and the hidden part */
+        .ticket-reveal-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Forces Center Horizontally */
+            justify-content: center;
+            width: 100%;
+            margin: 40px 0;
+        }
+        
+        /* The hidden drawer itself */
+        .hidden-content {
+            width: 100%;
+            display: flex;       /* This ensures inner content can be centered */
+            justify-content: center; /* Centers the content horizontally */
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 1s ease-out, opacity 0.8s ease;
+            opacity: 0;
+        }
+
+        .hidden-content.open {
+            max-height: 1200px; 
+            opacity: 1;
+            margin-top: 30px;
+        }
+
+        /* The wrapper immediately around the ticket */
+        .ticket-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center; /* CRITICAL: Centers the ticket */
+            padding: 10px; /* Prevents edge touching on mobile */
+        }
+
+        /* The actual ticket card */
+        .ticket {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            border: 2px dashed var(--soft-pink);
+            width: 100%;
+            max-width: 500px; /* Limits size */
+            margin: 0 auto; /* Backup centering */
+        }
+        
+        /* === FIXED CENTERING LOGIC END === */
+
+        .ticket-header {
+            background: var(--deep-pink);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .ticket-body {
+            padding: 30px;
+            text-align: center;
+        }
+        .ticket-detail {
+            margin: 15px 0;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .ticket-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #999;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .status-text {
+            color: #2ecc71; /* Green for confirmed */
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+        }
+        .barcode {
+            font-family: 'Courier New', monospace;
+            letter-spacing: 5px;
+            margin-top: 20px;
+            opacity: 0.5;
+            font-size: 0.8rem;
+        }
+
+        /* REVEAL BUTTONS */
+        .reveal-btn {
+            background: var(--soft-pink); 
+            color: var(--text-main);
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Playfair Display', serif;
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(231, 84, 128, 0.2);
+            transition: all 0.4s;
+            margin: 0 auto; /* Centers the button */
+        }
+        .reveal-btn:hover { transform: scale(1.05); background: var(--deep-pink); color: white; }
+
+        /* FINAL MESSAGE STYLE */
+        .final-message-container {
+            text-align: center;
+            background: white;
+            padding: 50px 20px;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(231, 84, 128, 0.1);
+            margin-top: 80px;
+            margin-bottom: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Forces the text inside the final message to align properly */
+        .romantic-text-box {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="hearts-bg" id="heartsContainer"></div>
+
+    <section class="hero">
+        <span class="script-font">It's been 5 days...</span>
+        <h1>And I'm really glad we matched.</h1>
+        <p>I didn't expect to find someone like you on this app. <br>Especially not while I'm just visiting.</p>
+        <button class="btn-start" onclick="document.getElementById('story').scrollIntoView({behavior: 'smooth'})">
+            See Why 👇
+        </button>
+    </section>
+
+    <div id="story" class="container">
+        
+        <div class="timeline-card">
+            <span class="day-tag">DAY 1: THE START</span>
+            <h3>"Okay, she's cute."</h3>
+            <p>But lots of people are cute. You had a different vibe. A calm energy that made me want to keep typing.</p>
+        </div>
+
+        <div class="timeline-card">
+            <span class="day-tag">DAY 2 & 3: THE CONNECTION</span>
+            <h3>"Wait, she's actually cool."</h3>
+            <p>We started talking properly. I realized you weren't just a pretty face. You were fun, even if you say you're shy.</p>
+        </div>
+
+        <div class="timeline-card">
+            <span class="day-tag">DAY 4: THE REALIZATION</span>
+            <h3>"The Shyness."</h3>
+            <p>You mentioned being bad with eye contact. You mentioned being "extremely shy."<br>And honestly? That just makes me want to meet you more. I think it's adorable.</p>
+        </div>
+
+        <div class="timeline-card" style="border-left-color: var(--deep-pink);">
+            <span class="day-tag">DAY 5: TODAY</span>
+            <h3>"I don't want to leave without seeing you."</h3>
+            <p>Talking to you has become the highlight of my days here. And I’d hate to look back and wonder "what if?"</p>
+        </div>
+
+    </div>
+
+    <div class="container grid-section" style="padding-top: 0;">
+        <h2>Why I'm Smiling</h2>
+        <p class="subtitle">(Besides the fact that you're cute)</p>
+        
+        <div class="details-grid">
+            <div class="detail-box">
+                <span class="detail-icon">🌙</span>
+                <h4>The Vibe</h4>
+                <p>You like night walks and long drives. No loud noises, just calm energy. That’s exactly my speed.</p>
+            </div>
+            <div class="detail-box">
+                <span class="detail-icon">👀</span>
+                <h4>The Eye Contact</h4>
+                <p>You said you're bad at it. Challenge accepted. I promise to make it easy for you.</p>
+            </div>
+            <div class="detail-box">
+                <span class="detail-icon">✨</span>
+                <h4>The Feeling</h4>
+                <p>I feel comfortable with you. Not rushed. Not pressured. Just... happy.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container meeting-scenario">
+        <h2>If We Ever Meet...</h2>
+        <div class="scenario-text">
+            <p>First coffee (or staring contest arena):</p>
+            <br>
+            <p>I’ll pretend I’m confident.</p>
+            <p>You’ll pretend you aren’t shy.</p>
+            <p>We’ll both probably fail.</p>
+            <br>
+            <span class="win-text">And if it feels like this — easy and calm — I’ll consider that a win.</span>
+        </div>
+    </div>
+
+    <div class="container ticket-reveal-wrapper">
+        <h2 style="color: #888; font-size: 1.5rem; margin-bottom: 30px;">But since you already said yes...</h2>
+        
+        <button class="reveal-btn" onclick="revealContent('officialTicket', this)">View Official Ticket 🎟️</button>
+
+        <div id="officialTicket" class="hidden-content">
+            <div class="ticket-wrapper">
+                <div class="ticket">
+                    <div class="ticket-header">
+                        <span style="font-size: 2rem;">🎟️</span>
+                    </div>
+                    <div class="ticket-body">
+                        <div class="ticket-detail">
+                            <span class="ticket-label">Guest of Honor</span>
+                            The Shyest Girl in Bangladesh
+                        </div>
+                        <div class="ticket-detail">
+                            <span class="ticket-label">Activity</span>
+                            Walking Under The Stars ✨
+                        </div>
+                        <div class="ticket-detail">
+                            <span class="ticket-label">Mandatory Requirement</span>
+                            Hand Holding (Non-negotiable) 🤝
+                        </div>
+                        <div class="ticket-detail" style="border: none;">
+                            <span class="ticket-label">Status</span>
+                            <span class="status-text">CONFIRMED ✅</span>
+                        </div>
+                        <div class="barcode">||| || ||||| ||| || |||| |||</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container final-message-container">
+        <button class="reveal-btn" style="background: linear-gradient(45deg, #FF9A9E, #FECFEF);" onclick="revealContent('finalMsg', this)">What if this turns into something?</button>
+        
+        <div id="finalMsg" class="hidden-content">
+            <div class="romantic-text-box">
+                <h2 style="margin: 30px 0 20px; color: var(--deep-pink); font-family: 'Playfair Display', serif; font-style: italic;">Then we let it.</h2>
+                <div style="font-size: 1.1rem; color: #555; line-height: 2;">
+                    <p>I don’t know where this goes.</p>
+                    <p>I don’t want to rush it.</p>
+                    <p>I just know I enjoy this start.</p>
+                    <br>
+                    <p>And if you’re open to it, I’d like to explore it slowly — without pressure, without expectations — just two people seeing where curiosity leads.</p>
+                </div>
+                <br><br>
+                <p style="font-family: 'Great Vibes', cursive; font-size: 2.5rem; color: var(--deep-pink);">
+                    See you soon. — Sadik
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Hearts Logic
+        function createHearts() {
+            const container = document.getElementById('heartsContainer');
+            for(let i=0; i<15; i++) {
+                let heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.animationDuration = (Math.random() * 5 + 10) + "s";
+                heart.style.animationDelay = (Math.random() * 5) + "s";
+                container.appendChild(heart);
+            }
+        }
+        createHearts();
+
+        // Scroll Animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.timeline-card').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Unified Reveal Logic for both buttons
+        function revealContent(elementId, btn) {
+            const content = document.getElementById(elementId);
+            content.classList.add('open');
+            
+            // Fade out the button
+            btn.style.opacity = '0';
+            btn.style.pointerEvents = 'none';
+            
+            // Hide button completely after fade
+            setTimeout(() => {
+                btn.style.display = 'none';
+            }, 500);
+        }
+    </script>
+</body>
+</html>
